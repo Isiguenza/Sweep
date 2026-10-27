@@ -35,7 +35,7 @@ When you're done, hold both <kbd>⌘</kbd> keys for 3 seconds.
 
 1. Download **`Sweep-x.y.dmg`** from the [latest release](https://github.com/Isiguenza/Sweep/releases/latest).
 2. Open it and drag **Sweep** into **Applications**.
-3. Launch Sweep. If macOS says it can't verify the developer, open **System Settings › Privacy & Security** and click **Open Anyway**.
+3. Launch Sweep. The app is signed and notarized by Apple, so it opens like any other app.
 
 ### Permissions
 
