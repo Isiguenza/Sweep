@@ -20,18 +20,18 @@ When you're done, hold both <kbd>⌘</kbd> keys for 3 seconds.
 
 ---
 
-## ✨ Features
+## Features
 
-- ⌨️ **Lock the keyboard**: every key is swallowed while you clean, including the lock button.
-- 🖱️ **Lock the trackpad and/or an external mouse**, separately.
-- 🌑 **Black screen** on all displays or just one, so dust and smudges stand out.
-- 🔆 **Brightness boost** (optional): raises the real brightness while you clean and restores it afterwards.
-- 🔐 **Unlock chord**: hold **left ⌘ + right ⌘** for 3 seconds. Hard to hit with a cloth, easy to do on purpose.
-- 🛟 **Safety net**: a cleaning ends on its own after 2–15 minutes, or when you close the lid. Input, cursor and brightness are always restored. If Sweep ever quits unexpectedly, input comes back immediately and brightness is fixed on the next launch.
-- 🐤 **A little mascot** that keeps you company while you clean.
-- ⚡ **Global shortcut** (<kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>S</kbd> by default) and a menu bar icon. It can also launch at login.
+- **Lock the keyboard**: every key is swallowed while you clean, including the lock button.
+- **Lock the trackpad and/or an external mouse**, separately.
+- **Black screen** on all displays or just one, so dust and smudges stand out.
+- **Brightness boost** (optional): raises the real brightness while you clean and restores it afterwards.
+- **Unlock chord**: hold **left ⌘ + right ⌘** for 3 seconds. Hard to hit with a cloth, easy to do on purpose.
+- **Safety net**: a cleaning ends on its own after 2–15 minutes, or when you close the lid. Input, cursor and brightness are always restored. If Sweep ever quits unexpectedly, input comes back immediately and brightness is fixed on the next launch.
+- **A pixel-art mascot** that keeps you company while you clean.
+- **Global shortcut** (<kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>S</kbd> by default) and a menu bar icon. It can also launch at login.
 
-## 📦 Install
+## Install
 
 1. Download **`Sweep-x.y.dmg`** from the [latest release](https://github.com/Isiguenza/Sweep/releases/latest).
 2. Open it and drag **Sweep** into **Applications**.
@@ -46,7 +46,7 @@ When you're done, hold both <kbd>⌘</kbd> keys for 3 seconds.
 
 Sweep never records or sends what you type. Everything runs locally.
 
-## 🛠️ Build from source
+## Build from source
 
 Requires **Xcode 26+** and **macOS 14+**.
 
@@ -70,7 +70,7 @@ xcodebuild test -project Sweep.xcodeproj -scheme Sweep -destination 'platform=ma
 
 This archives a Release build, signs it with the first *Developer ID Application* identity in your keychain, and builds `dist/Sweep-<version>.dmg` with a styled Finder window. Set `NOTARY_PROFILE=<profile>` to notarize and staple it as well. See the header of [`scripts/make-dmg.sh`](scripts/make-dmg.sh) for details.
 
-## 🗂️ Project layout
+## Project layout
 
 ```
 Sweep/
@@ -84,11 +84,11 @@ SweepTests/      Unit tests (session, unlock chord, policies, shortcuts)
 scripts/         DMG packaging
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Issues and pull requests are welcome. If you find a way that input slips through during a cleaning, please [open an issue](https://github.com/Isiguenza/Sweep/issues).
 
-## 📄 License
+## License
 
 Sweep is free software, released under the [GNU General Public License v3.0](LICENSE).
 
