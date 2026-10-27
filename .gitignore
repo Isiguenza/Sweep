@@ -1,0 +1,6 @@
+build/
+dist/
+
+# Xcode
+xcuserdata/
+.DS_Store
