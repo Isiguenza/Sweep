@@ -3,6 +3,14 @@ import SwiftUI
 /// Where the setup UI is shown: the menu bar popover or the app window.
 enum PanelStyle {
     case popover, window
+
+    /// The popover is clear glass, so a blue wash over a blue wallpaper loses its text.
+    /// Selections there are solid blue with white text instead.
+    var solidSelection: Bool { self == .popover }
+}
+
+extension EnvironmentValues {
+    @Entry var panelStyle: PanelStyle = .window
 }
 
 /// Choose what to block and which screens to black out, then start.
@@ -38,6 +46,7 @@ struct PanelView: View {
         .padding(style == .window ? 28 : 18)
         .padding(.top, style == .window ? 14 : 0)
         .frame(width: style == .window ? 420 : 332)
+        .environment(\.panelStyle, style)
         .motion(Theme.Motion.smooth, value: controller.missingPermission)
         .motion(Theme.Motion.smooth, value: controller.session.notice)
     }
@@ -199,6 +208,9 @@ private struct DeviceTile: View {
     @Binding var isOn: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.panelStyle) private var panelStyle
+
+    private var solid: Bool { isOn && panelStyle.solidSelection }
 
     var body: some View {
         Button {
@@ -223,18 +235,18 @@ private struct DeviceTile: View {
                         .font(.system(size: 12, weight: .semibold))
                     Text(detail ?? (isOn ? "Locked" : "Active"))
                         .font(.system(size: 10.5))
-                        .foregroundStyle(isOn ? AnyShapeStyle(Theme.blue.opacity(0.85)) : AnyShapeStyle(.secondary))
+                        .foregroundStyle(solid ? AnyShapeStyle(.white.opacity(0.8)) : isOn ? AnyShapeStyle(Theme.blue.opacity(0.85)) : AnyShapeStyle(.secondary))
                         .contentTransition(.opacity)
                         .lineLimit(1)
                 }
             }
-            .foregroundStyle(isOn ? AnyShapeStyle(Theme.blue) : AnyShapeStyle(.primary))
+            .foregroundStyle(solid ? AnyShapeStyle(.white) : isOn ? AnyShapeStyle(Theme.blue) : AnyShapeStyle(.primary))
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: Theme.corner, style: .continuous).fill(isOn ? Theme.blueWash : Theme.surface))
+            .background(RoundedRectangle(cornerRadius: Theme.corner, style: .continuous).fill(solid ? Theme.blue : isOn ? Theme.blueWash : Theme.surface))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.corner, style: .continuous)
-                    .strokeBorder(isOn ? Theme.blue.opacity(0.65) : Theme.hairline, lineWidth: isOn ? 1.25 : 0.5)
+                    .strokeBorder(solid ? .white.opacity(0.18) : isOn ? Theme.blue.opacity(0.65) : Theme.hairline, lineWidth: isOn ? 1.25 : 0.5)
             )
             .contentShape(RoundedRectangle(cornerRadius: Theme.corner, style: .continuous))
         }
@@ -302,6 +314,7 @@ private struct ScreenList: View {
     @Binding var target: ScreenTarget
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.panelStyle) private var panelStyle
 
     var body: some View {
         VStack(spacing: 2) {
@@ -314,13 +327,14 @@ private struct ScreenList: View {
 
     private func row(_ title: String, symbol: String, value: ScreenTarget) -> some View {
         let selected = target == value
+        let solid = selected && panelStyle.solidSelection
         return Button {
             withMotion(Theme.Motion.snappy) { target = value }
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: symbol)
                     .font(.system(size: 12))
-                    .foregroundStyle(selected ? AnyShapeStyle(Theme.blue) : AnyShapeStyle(.secondary))
+                    .foregroundStyle(solid ? AnyShapeStyle(.white) : selected ? AnyShapeStyle(Theme.blue) : AnyShapeStyle(.secondary))
                     .frame(width: 20)
                 Text(title)
                     .font(.system(size: 12, weight: selected ? .semibold : .regular))
@@ -329,13 +343,14 @@ private struct ScreenList: View {
                 if selected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(Theme.blue)
+                        .foregroundStyle(solid ? .white : Theme.blue)
                         .transition(reduceMotion ? .opacity : .scale(scale: 0.4).combined(with: .opacity))
                 }
             }
             .padding(.horizontal, 8)
             .frame(height: 28)
-            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(selected ? Theme.blueWash : .clear))
+            .foregroundStyle(solid ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
+            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(solid ? Theme.blue : selected ? Theme.blueWash : .clear))
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
         .buttonStyle(PressableStyle(pressedScale: 0.98))
