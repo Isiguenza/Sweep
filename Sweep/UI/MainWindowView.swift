@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// The app window: the character's stage on the left, setup on the right. Each time the
-/// app is opened, the welcome card appears in front of it.
+/// The app window: the character's stage on the left, setup on the right. Until the user
+/// dismisses it once, the welcome card appears in front of it.
 struct MainWindowView: View {
     let controller: AppController
     @State private var showsWelcome: Bool
 
     init(controller: AppController) {
         self.controller = controller
-        _showsWelcome = State(initialValue: controller.showsWelcomeOnOpen)
+        _showsWelcome = State(initialValue: !controller.preferences.hasSeenWelcome)
     }
 
     var body: some View {
@@ -43,7 +43,7 @@ struct MainWindowView: View {
 
     private func dismissWelcome() {
         withMotion(Theme.Motion.smooth) { showsWelcome = false }
-        controller.showsWelcomeOnOpen = false
+        controller.preferences.hasSeenWelcome = true
     }
 }
 

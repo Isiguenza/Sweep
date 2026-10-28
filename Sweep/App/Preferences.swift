@@ -12,6 +12,8 @@ final class Preferences {
     var adjustsBrightness: Bool { didSet { save(adjustsBrightness, .adjustsBrightness) } }
     var brightness: Double { didSet { save(brightness, .brightness) } }
     var safetyLimitMinutes: Int { didSet { save(safetyLimitMinutes, .safetyLimit) } }
+    /// Set once the user dismisses the welcome card; it never shows again after that.
+    var hasSeenWelcome: Bool { didSet { save(hasSeenWelcome, .hasSeenWelcome) } }
     var showInMenuBar: Bool {
         didSet {
             save(showInMenuBar, .showInMenuBar)
@@ -26,7 +28,7 @@ final class Preferences {
     @ObservationIgnored private let defaults: UserDefaults
 
     private enum Key: String {
-        case blockKeyboard, blockTrackpad, blockMouse, blackout, screenTarget, adjustsBrightness, brightness, safetyLimit, showInMenuBar
+        case blockKeyboard, blockTrackpad, blockMouse, blackout, screenTarget, adjustsBrightness, brightness, safetyLimit, showInMenuBar, hasSeenWelcome
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -48,6 +50,7 @@ final class Preferences {
         adjustsBrightness = defaults.bool(forKey: Key.adjustsBrightness.rawValue)
         brightness = defaults.double(forKey: Key.brightness.rawValue)
         showInMenuBar = defaults.bool(forKey: Key.showInMenuBar.rawValue)
+        hasSeenWelcome = defaults.bool(forKey: Key.hasSeenWelcome.rawValue)
         let limit = defaults.integer(forKey: Key.safetyLimit.rawValue)
         safetyLimitMinutes = Self.safetyLimitChoices.contains(limit) ? limit : 5
         screenTarget = defaults.data(forKey: Key.screenTarget.rawValue)

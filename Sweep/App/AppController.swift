@@ -23,8 +23,6 @@ final class AppController {
     @ObservationIgnored var onOpenSettings: (() -> Void)?
     /// Shows the app window; set by the app delegate.
     @ObservationIgnored var onShowWindow: (() -> Void)?
-    /// The window opens on the welcome card after each launch, then goes straight to setup.
-    @ObservationIgnored var showsWelcomeOnOpen = true
     /// The app window, set by the app delegate once created.
     @ObservationIgnored weak var mainWindow: NSWindow?
     /// The window was turned into the session card and must come back when it ends.
@@ -63,6 +61,7 @@ final class AppController {
         preferences.onShowInMenuBarChange = { [weak self] _ in self?.updateMenuBarPresence() }
         observeSystemInterruptions()
 
+        permissions.onGranted = { [weak self] _ in self?.returnAfterPermissionGranted() }
         session.onRunningChange = { [weak self] running in self?.sessionRunningChanged(running) }
         shortcuts.onPress = { [weak self] in self?.togglePanel() }
         shortcuts.activate()
@@ -302,6 +301,17 @@ final class AppController {
         }
         RunLoop.main.add(timer, forMode: .common)
         permissionPoll = timer
+    }
+
+    /// Brings Sweep back from System Settings once the user has granted access.
+    private func returnAfterPermissionGranted() {
+        guard !session.isRunning else { return }
+        if let mainWindow, mainWindow.isVisible {
+            NSApp.activate()
+            mainWindow.makeKeyAndOrderFront(nil)
+        } else {
+            showPanel()
+        }
     }
 
     func stopPermissionPolling() {

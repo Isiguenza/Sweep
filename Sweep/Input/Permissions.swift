@@ -30,19 +30,51 @@ final class PermissionCenter: PermissionChecking {
         if im != inputMonitoring { inputMonitoring = im }
     }
 
+    /// Called on the main thread when a permission requested here is granted.
+    @ObservationIgnored var onGranted: ((MissingPermission) -> Void)?
+    @ObservationIgnored private let guide = PermissionGuide()
+    @ObservationIgnored private var watch: Timer?
+    @ObservationIgnored private var watching: MissingPermission?
+
+    /// Opens the pane straight away (no system prompt), with the drag card under it.
     func requestAccessibility() {
-        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-        if !AXIsProcessTrustedWithOptions(options) {
-            open("Privacy_Accessibility")
-        }
+        request(.accessibility)
     }
 
     func requestInputMonitoring() {
-        if IOHIDCheckAccess(kIOHIDRequestTypeListenEvent) == kIOHIDAccessTypeUnknown {
-            IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
-        } else {
-            open("Privacy_ListenEvent")
+        request(.inputMonitoring)
+    }
+
+    private func request(_ kind: MissingPermission) {
+        open(kind == .accessibility ? "Privacy_Accessibility" : "Privacy_ListenEvent")
+        guide.show(for: kind)
+        startWatching(kind)
+    }
+
+    /// Polls until the permission is granted, keeping the drag card next to System Settings.
+    private func startWatching(_ kind: MissingPermission) {
+        watching = kind
+        watch?.invalidate()
+        let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.watchTick() }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        watch = timer
+    }
+
+    private func watchTick() {
+        guard let kind = watching else { return }
+        refresh()
+        let granted = kind == .accessibility ? accessibility : inputMonitoring
+        guard granted else {
+            guide.update()
+            return
+        }
+        watch?.invalidate()
+        watch = nil
+        watching = nil
+        guide.hide()
+        onGranted?(kind)
     }
 
     private func open(_ anchor: String) {
